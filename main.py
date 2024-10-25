@@ -1,6 +1,9 @@
+import sys
 import pygame
 from constants import *
 from player import *
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
 
 def main():
     print("Starting asteroids!")
@@ -12,6 +15,13 @@ def main():
     dt = 0
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
+    updateable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+    Player.containers = (updateable, drawable)
+    Asteroid.containers = (updateable, asteroids, drawable)
+    AsteroidField.containers = updateable
+    asteroid_field = AsteroidField()
     player = Player(x, y)
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     running = True
@@ -20,8 +30,15 @@ def main():
             if event.type == pygame.QUIT:
                 return
         screen.fill("black")
-        player.draw(screen)
-        player.update(dt)
+        for thing in drawable:
+            thing.draw(screen)
+        for thing in updateable:
+            thing.update(dt)
+        for thing in asteroids:
+            if thing.collision_check(player):
+                print("Game over!")
+                sys.exit()
+
         pygame.display.flip()
         frames = clock.tick(60)
         dt = frames / 1000
