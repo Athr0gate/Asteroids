@@ -51,8 +51,8 @@ def main():
             for shot in shots:
                 if thing.collision_check(shot):
                     shot.kill()
-                    thing.kill()
-    
+                    thing.split()
+
         for thing in drawable:
             thing.draw(screen)
 
